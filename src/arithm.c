@@ -1,28 +1,4 @@
-#include <limits.h>
-#include <math.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX_DECIMAL 79228162514264337593543950335.0F
-#define MIN_DECIMAL -1 * MAX_DECIMAL
-#define MAX_SCALE 28
-#define MAX_FLOAT 1.0E-28
-#define s21_INF 1.0 / 0.0
-#define s21_NAN 0.0 / 0.0
-#define MINUS 0x80000000  // 10000000 00000000 00000000 00000000
-#define SCALE 0x00ff0000  // 00000000 11111111 00000000 00000000
-
-typedef struct {
-  unsigned int bits[4];
-} s21_decimal;
-
-typedef struct {
-  unsigned sign;
-  int scale;
-  unsigned int bits[8];
-} s21_big_decimal;
+#include "arithm.h"
 
 unsigned int set_mask(int index) { return 1u << (index % 32); }
 
@@ -297,20 +273,6 @@ int comparison_mantiss(s21_big_decimal val_1, s21_big_decimal val_2) {
     }
   }
   return flag;
-}
-
-int diff_mantiss(s21_big_decimal val_1, s21_big_decimal val_2) {
-  int result = 0;
-  for (int i = 255; i > -1; i--) {
-    if (get_bit_bigdecimal(val_1, i) > get_bit_bigdecimal(val_2, i)) {
-      result = 1;
-      break;
-    } else if (get_bit_bigdecimal(val_1, i) < get_bit_bigdecimal(val_2, i)) {
-      result = -1;
-      break;
-    }
-  }
-  return result;
 }
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
