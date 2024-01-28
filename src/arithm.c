@@ -116,7 +116,7 @@ void degree_alignment(s21_decimal *d_a, s21_decimal *d_b) {
 }
 
 void shift_left_bigdecimal(s21_big_decimal *src) {
-  for (int i = 638; i >= 0; i--) {
+  for (int i = 510; i >= 0; i--) {
     set_bit_bigdecimal(src, i + 1, get_bit_bigdecimal(*src, i));
   }
   set_bit_bigdecimal(src, 0, 0);
@@ -131,7 +131,7 @@ void set_bit_bigdecimal(s21_big_decimal *src, int n, int sign_value) {
 }
 
 void initialize_bigdec(s21_big_decimal *src) {
-  for (int i = 0; i < 640; i++) {
+  for (int i = 0; i < 512; i++) {
     set_bit_bigdecimal(src, i, 0);
   }
 }
@@ -145,10 +145,10 @@ int get_bit_bigdecimal(const s21_big_decimal src, int n) {
 }
 
 void shift_right_bigdecimal(s21_big_decimal *src) {
-  for (int i = 0; i < 639; i++) {
+  for (int i = 0; i < 511; i++) {
     set_bit_bigdecimal(src, i, get_bit_bigdecimal(*src, i + 1));
   }
-  set_bit_bigdecimal(src, 639, 0);
+  set_bit_bigdecimal(src, 511, 0);
 }
 
 void bank_rounding(s21_big_decimal *result, s21_big_decimal *temp) {
@@ -329,14 +329,13 @@ int div_no_rounding(s21_decimal d_a, s21_decimal d_b,
   return 0;
 }
 
-int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b,
-                            s21_big_decimal *result) {
+int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b, s21_big_decimal *result) {
   initialize_bigdec(result);
   s21_big_decimal zero;
   initialize_bigdec(&zero);
   int max_bit_a = 0;
   int max_bit_b = 0;
-  for (int i = 0; i < 640; i++) {
+  for (int i = 0; i < 512; i++) {
     if (get_bit_bigdecimal(d_a, i) == 1) {
       max_bit_a = i;
     }
@@ -349,7 +348,7 @@ int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b,
     shift_left_bigdecimal(&d_b);
   }
   if (s21_is_less_bigdec(
-          d_a, d_b)) {  ///////////////////////////////////////////////////
+          d_a, d_b)) {
     shift_right_bigdecimal(&d_b);
     k++;
   }
@@ -358,8 +357,7 @@ int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b,
   s21_big_decimal d_buff_2;
   initialize_bigdec(&d_buff_2);
   while (k <= max_bit_a) {
-    if (s21_is_not_equal_bigdec(
-            d_a, zero)) {  ////////////////////////////////////////
+    if (s21_is_not_equal_bigdec(d_a, zero)) {
       subt_bigdec(d_a, d_b, &d_a);
       if (s21_is_not_equal_bigdec(*result, zero)) {
         shift_left_bigdecimal(result);
@@ -394,7 +392,7 @@ int mullt(s21_decimal a, s21_decimal b, s21_decimal *result) {
 int mullt_bigdec(s21_big_decimal a, s21_big_decimal b,
                             s21_big_decimal *result) {
   initialize_bigdec(result);
-  for (int i = 0; i < 640; i++) {
+  for (int i = 0; i < 512; i++) {
     if (get_bit_bigdecimal(b, i) == 1) {
       addit_bigdec(*result, a, result);
     }
@@ -455,7 +453,7 @@ int addit_bigdec(s21_big_decimal a, s21_big_decimal b,
                             s21_big_decimal *result) {
   initialize_bigdec(result);
   int temp = 0;
-  for (int i = 0; i < 640; i++) {
+  for (int i = 0; i < 512; i++) {
     int res;
     res = get_bit_bigdecimal(a, i) + get_bit_bigdecimal(b, i) + temp;
     if (res == 3) {
@@ -496,12 +494,11 @@ int subt(s21_decimal a, s21_decimal b, s21_decimal *result) {
   return 0;
 }
 
-int subt_bigdec(s21_big_decimal a, s21_big_decimal b,
-                            s21_big_decimal *result) {
+int subt_bigdec(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
   initialize_bigdec(result);
   s21_big_decimal buff;
   initialize_bigdec(&buff);
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < 16; i++) {
     b.bits[i] = ~(b.bits[i]);
   }
   s21_big_decimal temp;
@@ -637,7 +634,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   initialize_bigdec(&d_buff_1);
   s21_big_decimal d_buff_2;
   initialize_bigdec(&d_buff_2);
-  int param = 120 + k;
+  int param = 96 + k;
   while (k <= param) {
     if (s21_is_not_equal(value_1, zero)) {
       subt(value_1, value_2, &value_1);
@@ -684,15 +681,11 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       d_buff_1.bits[0] = 10;
       s21_big_decimal d_buff_4;
       initialize_bigdec(&d_buff_4);
-      int round = 0;
       int a = 0;
       while ((d_buff_2.bits[3] != 0) || (d_buff_2.bits[4] != 0) ||
              (d_buff_2.bits[5] != 0) || (d_buff_2.bits[6] != 0) ||
              (d_buff_2.bits[7] != 0) || (d_buff_2.bits[8] != 0) ||
-             (d_buff_2.bits[9] != 0) || (d_buff_2.bits[10] != 0) ||
-             (d_buff_2.bits[11] != 0) || (d_buff_2.bits[12] != 0) ||
-             (d_buff_2.bits[13] != 0) || (d_buff_2.bits[14] != 0)) {
-        round = 1;
+             (d_buff_2.bits[9] != 0) || (d_buff_2.bits[10] != 0)) {
         d_buff_4 = d_buff_2;
         divid_bigdec(d_buff_2, d_buff_1, &d_buff_2);
         a++;
@@ -702,22 +695,6 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       mullt_bigdec(d_buff_2, d_buff_1, &d_buff_3);
       subt_bigdec(d_buff_4, d_buff_3, &d_buff_3);
       scale = fractional_part_max_index - a + scale_a - scale_b;
-      if (round == 1) {
-        if (d_buff_3.bits[0] >= 5) {
-          if ((d_buff_2.bits[0] == UINT_MAX) &&
-              (d_buff_2.bits[1] == UINT_MAX) &&
-              (d_buff_2.bits[2] == UINT_MAX) && (scale <= 0)) {
-            if (sign_a == sign_b) {
-              return 1;
-            } else {
-              return 2;
-            }
-          }
-          initialize_bigdec(&d_buff_3);
-          d_buff_3.bits[0] = 1;
-          addit_bigdec(d_buff_2, d_buff_3, &d_buff_2);
-        }
-      }
     } else {
       scale = scale_a - scale_b;
     }
@@ -800,15 +777,11 @@ int s21_mul(s21_decimal a, s21_decimal b, s21_decimal *result) {
   if ((result_ext.bits[3] != 0) || (result_ext.bits[4] != 0) ||
       (result_ext.bits[5] != 0) || (result_ext.bits[6] != 0) ||
       (result_ext.bits[7] != 0) || (result_ext.bits[8] != 0) ||
-      (result_ext.bits[9] != 0) || (result_ext.bits[10] != 0) ||
-      (result_ext.bits[11] != 0) || (result_ext.bits[12] != 0) ||
-      (result_ext.bits[13] != 0) || (result_ext.bits[14] != 0)) {
+      (result_ext.bits[9] != 0) || (result_ext.bits[10] != 0)) {
     while ((result_ext.bits[3] != 0) || (result_ext.bits[4] != 0) ||
            (result_ext.bits[5] != 0) || (result_ext.bits[6] != 0) ||
            (result_ext.bits[7] != 0) || (result_ext.bits[8] != 0) ||
-           (result_ext.bits[9] != 0) || (result_ext.bits[10] != 0) ||
-           (result_ext.bits[11] != 0) || (result_ext.bits[12] != 0) ||
-           (result_ext.bits[13] != 0) || (result_ext.bits[14] != 0)) {
+           (result_ext.bits[9] != 0) || (result_ext.bits[10] != 0)) {
       temp = result_ext;
       divid_bigdec(result_ext, multiplier, &result_ext);
       scale--;
@@ -822,7 +795,6 @@ int s21_mul(s21_decimal a, s21_decimal b, s21_decimal *result) {
     }
     bank_rounding(&result_ext, &temp);
   }
-
   if (scale > 28) {
     while (scale > 28) {
       temp = result_ext;
@@ -845,7 +817,7 @@ int s21_is_less_bigdec(s21_big_decimal a,
   int result = 0;
   s21_big_decimal d_a = a;
   s21_big_decimal d_b = b;
-  for (int i = 639; i >= 0; i--) {
+  for (int i = 511; i >= 0; i--) {
     if (get_bit_bigdecimal(d_a, i) < get_bit_bigdecimal(d_b, i)) {
       result = 1;
       break;
@@ -863,7 +835,7 @@ int s21_is_not_equal_bigdec(s21_big_decimal a, s21_big_decimal b) {
   int result = 0;
   s21_big_decimal d_a = a;
   s21_big_decimal d_b = b;
-  for (int i = 639; i >= 0; i--) {
+  for (int i = 511; i >= 0; i--) {
     if (get_bit_bigdecimal(d_a, i) != get_bit_bigdecimal(d_b, i)) {
       result = 1;
       break;

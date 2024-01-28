@@ -8,23 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_DECIMAL 79228162514264337593543950335.0F
-#define MIN_DECIMAL -1 * MAX_DECIMAL
-#define MAX_SCALE 28
-#define MAX_FLOAT 1.0E-28
-#define s21_INF 1.0 / 0.0
-#define s21_NAN 0.0 / 0.0
-#define MINUS 0x80000000  // 10000000 00000000 00000000 00000000
-#define SCALE 0x00ff0000  // 00000000 11111111 00000000 00000000
-
 typedef struct {
   unsigned int bits[4];
 } s21_decimal;
 
 typedef struct {
-  unsigned sign;
-  int scale;
-  unsigned int bits[20];
+  unsigned int bits[16];
 } s21_big_decimal;
 
 int get_sign(s21_decimal src);
