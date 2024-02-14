@@ -1,5 +1,6 @@
 #include "arithm.h"
 
+#include "converters.h"
 int get_sign(s21_decimal src) {
   int result = get_bit(src, 127);
   return result;
@@ -212,9 +213,9 @@ int divid(s21_decimal d_a, s21_decimal d_b, s21_decimal *result) {
     k++;
   }
   while (k <= max_bit_a) {
-    if (s21_is_not_equal(d_a, zero)) {
+    if (!equal_arithm(d_a, zero)) {
       subt(d_a, d_b, &d_a);
-      if (s21_is_not_equal(*result, zero)) {
+      if (!equal_arithm(*result, zero)) {
         shift_left_decimal(result);
         set_bit(result, 0, 1);
       } else {
@@ -270,8 +271,7 @@ int divid(s21_decimal d_a, s21_decimal d_b, s21_decimal *result) {
   return 0;
 }
 
-int div_no_rounding(s21_decimal d_a, s21_decimal d_b,
-                               s21_decimal *result) {
+int div_no_rounding(s21_decimal d_a, s21_decimal d_b, s21_decimal *result) {
   initialize_decimal(result);
   int sign_a = get_sign(d_a);
   int sign_b = get_sign(d_b);
@@ -299,9 +299,9 @@ int div_no_rounding(s21_decimal d_a, s21_decimal d_b,
     k++;
   }
   while (k <= max_bit_a) {
-    if (s21_is_not_equal(d_a, zero)) {
+    if (!equal_arithm(d_a, zero)) {
       subt(d_a, d_b, &d_a);
-      if (s21_is_not_equal(*result, zero)) {
+      if (!equal_arithm(*result, zero)) {
         shift_left_decimal(result);
         set_bit(result, 0, 1);
       } else {
@@ -329,7 +329,8 @@ int div_no_rounding(s21_decimal d_a, s21_decimal d_b,
   return 0;
 }
 
-int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b, s21_big_decimal *result) {
+int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b,
+                 s21_big_decimal *result) {
   initialize_bigdec(result);
   s21_big_decimal zero;
   initialize_bigdec(&zero);
@@ -347,8 +348,7 @@ int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b, s21_big_decimal *resu
   for (int i = 0; i < max_bit_a - max_bit_b; i++) {
     shift_left_bigdecimal(&d_b);
   }
-  if (s21_is_less_bigdec(
-          d_a, d_b)) {
+  if (s21_is_less_bigdec(d_a, d_b)) {
     shift_right_bigdecimal(&d_b);
     k++;
   }
@@ -390,7 +390,7 @@ int mullt(s21_decimal a, s21_decimal b, s21_decimal *result) {
 }
 
 int mullt_bigdec(s21_big_decimal a, s21_big_decimal b,
-                            s21_big_decimal *result) {
+                 s21_big_decimal *result) {
   initialize_bigdec(result);
   for (int i = 0; i < 512; i++) {
     if (get_bit_bigdecimal(b, i) == 1) {
@@ -450,7 +450,7 @@ int func_for_sub(s21_decimal a, s21_decimal b, s21_decimal *result) {
 }
 
 int addit_bigdec(s21_big_decimal a, s21_big_decimal b,
-                            s21_big_decimal *result) {
+                 s21_big_decimal *result) {
   initialize_bigdec(result);
   int temp = 0;
   for (int i = 0; i < 512; i++) {
@@ -463,8 +463,9 @@ int addit_bigdec(s21_big_decimal a, s21_big_decimal b,
       set_bit_bigdecimal(result, i, 0);
       temp = 1;
     } else {
-      set_bit_bigdecimal(
-          result, i, get_bit_bigdecimal(a, i) + get_bit_bigdecimal(b, i) + temp);
+      set_bit_bigdecimal(result, i,
+                         get_bit_bigdecimal(a, i) + get_bit_bigdecimal(b, i) +
+                             temp);
       temp = 0;
     }
   }
@@ -591,10 +592,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   initialize_bigdec(&zero_ex);
   s21_decimal zero;
   initialize_decimal(&zero);
-  if (s21_is_equal(value_2, zero)) {
+  if (equal_arithm(value_2, zero)) {
     return 3;
   }
-  if (s21_is_equal(value_1, zero)) {
+  if (equal_arithm(value_1, zero)) {
     initialize_decimal(result);
     return 0;
   }
@@ -636,7 +637,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   initialize_bigdec(&d_buff_2);
   int param = 96 + k;
   while (k <= param) {
-    if (s21_is_not_equal(value_1, zero)) {
+    if (!equal_arithm(value_1, zero)) {
       subt(value_1, value_2, &value_1);
       if (s21_is_not_equal_bigdec(d_buff_2, zero_ex)) {
         shift_left_bigdecimal(&d_buff_2);
@@ -647,7 +648,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       shift_left_decimal(&value_1);
       k++;
     }
-    if (s21_is_equal(value_1, zero) && (k > max_bit_a)) {
+    if (equal_arithm(value_1, zero) && (k > max_bit_a)) {
       break;
     }
     while (s21_is_less_simple(value_1, value_2) && (k <= param)) {
@@ -812,8 +813,7 @@ int s21_mul(s21_decimal a, s21_decimal b, s21_decimal *result) {
   return res;
 }
 
-int s21_is_less_bigdec(s21_big_decimal a,
-                                s21_big_decimal b) {
+int s21_is_less_bigdec(s21_big_decimal a, s21_big_decimal b) {
   int result = 0;
   s21_big_decimal d_a = a;
   s21_big_decimal d_b = b;
@@ -845,39 +845,7 @@ int s21_is_not_equal_bigdec(s21_big_decimal a, s21_big_decimal b) {
   return result;
 }
 
-int s21_is_not_equal(s21_decimal a, s21_decimal b) { // надо было не мое
-  int result = 0;
-  s21_decimal d_a = a;
-  s21_decimal d_b = b;
-  degree_alignment(&d_a, &d_b);
-  if (get_sign(d_a) != get_sign(d_b)) {
-    result = 1;
-  } else {
-    for (int i = 95; i >= 0; i--) {
-      if (get_bit(d_a, i) != get_bit(d_b, i)) {
-        result = 1;
-        break;
-      }
-    }
-  }
-  if ((a.bits[0] == 0) && (a.bits[1] == 0) && (a.bits[2] == 0) &&
-      (b.bits[0] == 0) && (b.bits[1] == 0) && (b.bits[2] == 0)) {
-    result = 0;
-  }
-  return result;
-}
-
-int s21_from_int_to_decimal(int src, s21_decimal *dst) { // надо было не мое
-  initialize_decimal(dst);
-  if (src < 0) {
-    set_sign(dst, 1);
-    src = -src;
-  }
-  dst->bits[0] = src;
-  return 0;
-}
-
-int s21_is_equal(s21_decimal a, s21_decimal b) { // надо было не мое
+int equal_arithm(s21_decimal a, s21_decimal b) {
   int result = 1;
   s21_decimal d_a = a;
   s21_decimal d_b = b;
@@ -897,175 +865,4 @@ int s21_is_equal(s21_decimal a, s21_decimal b) { // надо было не мо�
     result = 1;
   }
   return result;
-}
-
-int get_exp_from_float(float src) { // надо было не мое
-  unsigned int buff = *(unsigned int *)&src;
-  int scale = 0;
-  int k = 0;
-  for (unsigned int i = 8388608; i != 2147483648; i = i << 1) {
-    if (!!(buff & i) == 1) {
-      scale += pow(2, k);
-    }
-    k++;
-  }
-  scale = scale - 127;
-  return scale;
-}
-
-int get_mantissa_min_index(float src) { // надо было не мое
-  int mantissa_min_index = 0;
-  int k = 0;
-  unsigned int buff = *(unsigned int *)&src;
-  for (unsigned int i = 1; i != 8388608; i = i << 1) {
-    if (!!(buff & i) == 1) {
-      mantissa_min_index = 23 - k;
-      break;
-    }
-    k++;
-  }
-  return mantissa_min_index;
-}
-
-int s21_from_float_to_decimal(float src, s21_decimal *dst) { // надо было не мое
-  initialize_decimal(dst);
-  int scale = get_exp_from_float(src);
-  int mantissa_min_index = -get_mantissa_min_index(src);
-  if (scale > 95) {
-    return 1;
-  }
-  if (scale < -94) {
-    return 1;
-  }
-  s21_big_decimal d_buff_1;
-  initialize_bigdec(&d_buff_1);
-  int multiplier = 0;
-  multiplier = scale + mantissa_min_index;
-  s21_big_decimal mantissa_buffer;
-  initialize_bigdec(&mantissa_buffer);
-  mantissa_buffer.bits[0] = 1;
-  for (int i = 0; i < scale - multiplier; i++) {
-    shift_left_bigdecimal(&mantissa_buffer);
-  }
-  unsigned int j = 8388608;
-  unsigned int buff = *(unsigned int *)&src;
-  for (int i = -1; i >= -23; i--) {
-    j = j >> 1;
-    if (!!(buff & j) == 1) {
-      d_buff_1.bits[0] = 1;
-      for (int k = 0; k < i + scale - multiplier; k++) {
-        shift_left_bigdecimal(&d_buff_1);
-      }
-      addit_bigdec(mantissa_buffer, d_buff_1, &mantissa_buffer);
-      initialize_bigdec(&d_buff_1);
-    }
-  }
-  initialize_bigdec(&d_buff_1);
-  s21_big_decimal d_buff_2;
-  initialize_bigdec(&d_buff_2);
-  s21_decimal result;
-  initialize_decimal(&result);
-  /////////////////////////////////////////////////
-  if (multiplier >= 0) {
-    for (int i = 0; i < multiplier; i++) {
-      shift_left_bigdecimal(&mantissa_buffer);
-    }
-    result.bits[0] = mantissa_buffer.bits[0];
-    result.bits[1] = mantissa_buffer.bits[1];
-    result.bits[2] = mantissa_buffer.bits[2];
-    result.bits[3] = mantissa_buffer.bits[3];
-    *dst = result;  ///////////////////////
-  } else {
-    d_buff_2 = mantissa_buffer;
-    initialize_bigdec(&d_buff_1);
-    d_buff_1.bits[0] = 5;
-    for (int i = 0; i < -multiplier; i++) {
-      mullt_bigdec(d_buff_1, d_buff_2, &d_buff_2);
-    }
-    initialize_bigdec(&d_buff_1);
-    s21_big_decimal d_buff_3;
-    initialize_bigdec(&d_buff_3);
-    d_buff_1.bits[0] = 10;
-    d_buff_3.bits[0] = 1;
-    for (int i = 0; i < -multiplier - 28; i++) {
-      mullt_bigdec(d_buff_1, d_buff_3, &d_buff_3);
-    }
-    if (-multiplier - 28 > 0) {
-      divid_bigdec(d_buff_2, d_buff_3, &d_buff_2);
-    }
-    result.bits[0] = d_buff_2.bits[0];
-    result.bits[1] = d_buff_2.bits[1];
-    result.bits[2] = d_buff_2.bits[2];
-    result.bits[3] = d_buff_2.bits[3];
-    if (multiplier < -28) {
-      scale = 28;
-    } else {
-      scale = -multiplier;
-    }
-    s21_decimal temp;
-    initialize_decimal(&temp);
-    temp.bits[0] = 10;
-    set_scale(scale, &result);
-  }
-  if (src < 0) {
-    set_sign(&result, 1);
-  }
-  *dst = result;
-  return 0;
-}
-
-int s21_from_decimal_to_float(s21_decimal src, float *dst) { // надо было не мое
-  *dst = 0;
-  int sign = get_sign(src);
-  int exp = get_scale(src);
-  long double result = 0;
-  for (int i = 0; i < 96; i++) {
-    if (get_bit(src, i) == 1) {
-      result += pow(2, i);
-    }
-  }
-  result /= pow(10, exp);
-  if (sign == 1) {
-    result = -result;
-  }
-  *dst = (float)result;
-  return 0;
-}
-
-int s21_from_decimal_to_int(s21_decimal src, int *dst) { // надо было не мое
-  *dst = 0;
-  int sign = get_sign(src);
-  int exp = get_scale(src);
-  s21_decimal src_buff;
-  initialize_decimal(&src_buff);
-  src_buff.bits[0] = src.bits[0];
-  src_buff.bits[1] = src.bits[1];
-  src_buff.bits[2] = src.bits[2];
-  src_buff.bits[3] = src.bits[3];
-  if ((exp > 0) && ((src.bits[1] != 0) || (src.bits[2] != 0))) {
-    int k = 0;
-    s21_decimal d_multiplier;
-    initialize_decimal(&d_multiplier);
-    d_multiplier.bits[0] = 10;
-    while (((src_buff.bits[1] != 0) || (src_buff.bits[2] != 0))) {
-      div_no_rounding(src_buff, d_multiplier, &src_buff);
-      exp--;
-      set_scale(exp, &src_buff);
-      k++;
-      if (exp < 0) {
-        return 1;
-      }
-    }
-  }
-  if ((src_buff.bits[1] != 0) || (src_buff.bits[2] != 0)) {
-    return 1;
-  }
-  unsigned int result = src_buff.bits[0];
-  exp = get_scale(src_buff);
-  result /= pow(10, exp);
-  if (sign == 1) {
-    result = -result;
-  }
-  *dst = (unsigned int)result;
-  return 0;
 }

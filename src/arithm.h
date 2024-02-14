@@ -8,13 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
-  unsigned int bits[4];
-} s21_decimal;
-
-typedef struct {
-  unsigned int bits[16];
-} s21_big_decimal;
+#include "s21_decimal.h"
 
 int get_sign(s21_decimal src);
 void set_sign(s21_decimal *src, int sign_value);
@@ -35,7 +29,8 @@ void shift_right_bigdecimal(s21_big_decimal *src);
 void bank_rounding(s21_big_decimal *result, s21_big_decimal *temp);
 int divid(s21_decimal d_a, s21_decimal d_b, s21_decimal *result);
 int div_no_rounding(s21_decimal d_a, s21_decimal d_b, s21_decimal *result);
-int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b, s21_big_decimal *result);
+int divid_bigdec(s21_big_decimal d_a, s21_big_decimal d_b,
+                 s21_big_decimal *result);
 int mullt(s21_decimal a, s21_decimal b, s21_decimal *result);
 int mullt_bigdec(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 int addit(s21_decimal a, s21_decimal b, s21_decimal *result);
@@ -52,13 +47,5 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 
-int s21_from_float_to_decimal(float src, s21_decimal *dst);
-int s21_from_decimal_to_float(s21_decimal src, float *dst);
-int s21_is_equal(s21_decimal a, s21_decimal b);
-int s21_from_int_to_decimal(int src, s21_decimal *dst);
-int s21_is_not_equal(s21_decimal a, s21_decimal b);
-int s21_from_decimal_to_int(s21_decimal src, int *dst);
-int get_exp_from_float(float src);
-int get_mantissa_min_index(float src);
-
+int equal_arithm(s21_decimal a, s21_decimal b);
 #endif

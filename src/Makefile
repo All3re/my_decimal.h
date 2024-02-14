@@ -1,39 +1,38 @@
 CC = gcc
 FLAG_C = -c
 FLAG_O = -o
-# ASAN = -g -fsanitize=address
 FLAG_COV = --coverage
 FLAG_ER = -Wall -Werror -Wextra
 
-all: clean gcov_report
+all: clean s21_decimal.a
 
-arithm.a:
-	$(CC) $(FLAG_ER) $(FLAG_C) arithm.c
-	ar rc arithm.a arithm.o
-	ranlib arithm.a
+s21_decimal.a:
+	$(CC) $(FLAG_ER) $(FLAG_C) s21_decimal.c arithm.c converters.c
+	ar rc s21_decimal.a s21_decimal.o arithm.o converters.o
+	ranlib s21_decimal.a
 
-tests: arithm.a
+test: s21_decimal.a
 	$(CC) $(FLAG_ER) $(FLAG_C) test.c main.c 
 	ar rc suite.a test.o
 	ranlib suite.a
-	$(CC) $(FLAG_ER) $(FLAG_COV) $(FLAG_O) tests arithm.a suite.a arithm.c main.o test.o -lcheck -lrt -lm -lsubunit -lpthread
-	./tests
+	$(CC) $(FLAG_ER) $(FLAG_COV) $(FLAG_O) test s21_decimal.a  arithm.c converters.c  suite.a s21_decimal.c main.o test.o -lcheck -lm -lpthread
+	./test
 
-gcov_report: tests
-	gcov tests-arithm*.gcda	
-	gcovr -b 
+test_ubuntu: s21_decimal.a
+	$(CC) $(FLAG_ER) $(FLAG_C) test.c main.c 
+	ar rc suite.a test.o
+	ranlib suite.a
+	$(CC) $(FLAG_ER) $(FLAG_COV) $(FLAG_O) test s21_decimal.a suite.a arithm.c converters.c s21_decimal.c main.o test.o -lcheck -lsubunit -lm -lpthread
+	./test
+
+
+gcov_report: test_ubuntu
+	gcov test-s21_*.gcda
 	gcovr
 	gcovr --html-details -o report.html
 
-check:
-	cppcheck --enable=all --force *.h *.c
-	cp ../materials/linters/CPPLINT.cfg CPPLINT.cfg
-	python3 ../materials/linters/cpplint.py --extension=c *.c *.h
-	CK_FORK=no leaks --atExit -- ./tests
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=RESULT_VALGRIND.txt ./tests
-
 clean:
 	-rm -rf *.o *.html *.gcda *.gcno *.css *.a *.gcov *.info *.out *.cfg *.txt
-	-rm -f tests
+	-rm -f test
 	-rm -f report
-	find . -type d -name 'tests.dSYM' -exec rm -r {} +
+
