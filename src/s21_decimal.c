@@ -7,6 +7,9 @@ work_decimal converte_to_extended(s21_decimal *a) {
   for (int i = 0; i < 3; i++) {
     decimal.bits[i] = a->bits[i] & MAXBITE;
   }
+  for (int i = 3; i < 7; i++) {
+    decimal.bits[i] = 0;
+  }
   decimal.scale = (a->bits[3] & SC) >> 16;
   decimal.sign = get_sign(*a);
   return decimal;
@@ -137,66 +140,134 @@ int check_dec(s21_decimal dec) {
   return check;
 }
 
-int compareInt(unsigned int a, unsigned int b) {
-  return a > b ? 1 : (a < b ? -1 : 0);
+void getoverflow(work_decimal *dec) {
+  int overflow = 0;
+  for (int i = 0; i < 7; i++) {
+    dec->bits[i] += overflow;
+    overflow = dec->bits[i] >> 32;
+    dec->bits[i] &= MAXBITE;
+  }
 }
 
-int decimal_compare(s21_decimal num1, s21_decimal num2) {
-  int sign1 = (num1.bits[3] >> 31) & 1;
-  int sign2 = (num2.bits[3] >> 31) & 1;
-
-  if (sign1 != sign2) {
-    return sign1 ? -1 : 1;
+void pointleft(work_decimal *dec) {
+  for (int i = 0; i < 7; i++) {
+    dec->bits[i] *= 10;
   }
-
-  unsigned long long int1 =
-      ((unsigned long long)num1.bits[2] << 32) | num1.bits[1];
-  unsigned long long int2 =
-      ((unsigned long long)num2.bits[2] << 32) | num2.bits[1];
-
-  unsigned long long frac1 =
-      ((unsigned long long)num1.bits[0] << 32) | num1.bits[0];
-  unsigned long long frac2 =
-      ((unsigned long long)num2.bits[0] << 32) | num2.bits[0];
-
-  int scale1 = (num1.bits[3] >> 16) & 0xFF;
-  int scale2 = (num2.bits[3] >> 16) & 0xFF;
-
-  if (scale1 > scale2) {
-    frac2 *= (unsigned long long)pow(10, scale1 - scale2);
-  } else if (scale2 > scale1) {
-    frac1 *= (unsigned long long)pow(10, scale2 - scale1);
-  }
-
-  unsigned long long num1_val =
-      int1 * (unsigned long long)pow(10, scale1) + frac1;
-  unsigned long long num2_val =
-      int2 * (unsigned long long)pow(10, scale2) + frac2;
-
-  return (sign1 ? -compareInt(num1_val, num2_val)
-                : compareInt(num1_val, num2_val));
+  getoverflow(dec);
+  dec->scale++;
 }
 
 int s21_is_equal(s21_decimal num1, s21_decimal num2) {
-  return decimal_compare(num1, num2) == 0;
+  int result = 1;
+
+  int scale1 = (num1.bits[3] & SC) >> 16;
+  int scale2 = (num2.bits[3] & SC) >> 16;
+  int sign1 = get_sign(num1);
+  int sign2 = get_sign(num2);
+  work_decimal numw1 = converte_to_extended(&num1);
+  numw1.scale = scale1;
+  work_decimal numw2 = converte_to_extended(&num2);
+  numw2.scale = scale2;
+  if (sign1 == sign2) {
+    if (scale1 > scale2) {
+      while (numw1.scale != numw2.scale) {
+        pointleft(&numw2);
+      }
+    } else if (scale1 < scale2) {
+      while (numw1.scale != numw2.scale) {
+        pointleft(&numw1);
+      }
+    }
+    for (int i = 0; i < 7; i++) {
+      if (numw1.bits[i] != numw2.bits[i]) {
+        result = 0;
+      }
+    }
+  } else {
+    result = 0;
+    if (numw1.bits[0] == 0 && numw2.bits[0] == 0 && numw1.bits[1] == 0 &&
+        numw2.bits[1] == 0 && numw1.bits[2] == 0 && numw2.bits[2] == 0 &&
+        numw2.bits[3] == 0 && numw1.bits[3] == 0 && numw2.bits[4] == 0 &&
+        numw2.bits[4] == 0 && numw1.bits[5] == 0 && numw2.bits[5] == 0) {
+      result = 1;
+    }
+  }
+
+  return result;
 }
 
 int s21_is_less(s21_decimal num1, s21_decimal num2) {
-  return decimal_compare(num1, num2) < 0;
+  int result = 1;
+
+  int scale1 = (num1.bits[3] & SC) >> 16;
+  int scale2 = (num2.bits[3] & SC) >> 16;
+  int sign1 = get_sign(num1);
+  int sign2 = get_sign(num2);
+  work_decimal numw1 = converte_to_extended(&num1);
+  numw1.scale = scale1;
+  work_decimal numw2 = converte_to_extended(&num2);
+  numw2.scale = scale2;
+  if (s21_is_equal(num1, num2) == 1) {
+    return 0;
+  }
+  if (sign1 == sign2) {
+    if (scale1 > scale2) {
+      while (numw1.scale != numw2.scale) {
+        pointleft(&numw2);
+      }
+    } else if (scale1 < scale2) {
+      while (numw1.scale != numw2.scale) {
+        pointleft(&numw1);
+      }
+    }
+    result = 0;
+    if (sign1 == 0) {
+      for (int i = 6; i >= 0; i--) {
+        if (numw2.bits[i] > numw1.bits[i]) {
+          result = 1;
+          break;
+        }
+        if (numw2.bits[i] < numw1.bits[i]) {
+          break;
+        }
+      }
+    } else {
+      for (int i = 6; i >= 0; i--) {
+        if (numw1.bits[i] > numw2.bits[i]) {
+          result = 1;
+          break;
+        }
+        if (numw2.bits[i] > numw1.bits[i]) {
+          break;
+        }
+      }
+    }
+  } else {
+    if (s21_is_equal(num1, num2) != 1) {
+      if (sign1 < sign2) {
+        result = 0;
+      }
+    } else
+      result = 0;
+  }
+
+  return result;
 }
 
-int s21_is_less_or_equal(s21_decimal num1, s21_decimal num2) {
-  return decimal_compare(num1, num2) <= 0;
+int s21_is_less_or_equal(s21_decimal value_1, s21_decimal value_2) {
+  int a = s21_is_equal(value_1, value_2);
+  int b = s21_is_less(value_1, value_2);
+  if (a == 1 || b == 1)
+    return 1;
+  else
+    return 0;
 }
-
-int s21_is_not_equal(s21_decimal num1, s21_decimal num2) {
-  return !s21_is_equal(num1, num2);
+int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
+  return !s21_is_less_or_equal(value_1, value_2);
 }
-
-int s21_is_greater_or_equal(s21_decimal num1, s21_decimal num2) {
-  return decimal_compare(num1, num2) >= 0;
+int s21_is_not_equal(s21_decimal value_1, s21_decimal value_2) {
+  return !s21_is_equal(value_1, value_2);
 }
-
-int s21_is_greater(s21_decimal num1, s21_decimal num2) {
-  return decimal_compare(num1, num2) > 0;
+int s21_is_greater_or_equal(s21_decimal value_1, s21_decimal value_2) {
+  return !s21_is_less(value_1, value_2);
 }

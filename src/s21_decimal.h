@@ -15,7 +15,7 @@ typedef struct {
 } s21_big_decimal;
 
 typedef struct {
-  uint64_t bits[3];
+  uint64_t bits[7];
   uint16_t scale;
   uint32_t sign;
 } work_decimal;
@@ -28,6 +28,8 @@ int s21_truncate(s21_decimal value, s21_decimal *result);
 int s21_round(s21_decimal value, s21_decimal *result);
 int s21_floor(s21_decimal value, s21_decimal *result);
 uint64_t pointright(work_decimal *a);
+void getoverflow(work_decimal *dec);
+void pointleft(work_decimal *dec);
 void get_zero_decimal(s21_decimal *a);
 int check_dec(s21_decimal dec);
 int s21_is_less(s21_decimal a, s21_decimal b);

@@ -1045,6 +1045,7 @@ START_TEST(div_test_13) {
   ck_assert_float_eq(a, b);
 }
 END_TEST
+
 Suite *suite_s21_div(void) {
   Suite *s;
   TCase *tc_core;
@@ -2532,7 +2533,7 @@ Suite *srunner_add_comparsion_tests(void) {
 START_TEST(test_int_to_decimal_ok1) {
   int src = 2147483647;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_int_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{2147483647, 0x00000000, 0x00000000, 0x00000000}};
@@ -2543,7 +2544,7 @@ START_TEST(test_int_to_decimal_ok1) {
 START_TEST(test_int_to_decimal_ok2) {
   int src = -489;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_int_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x000001e9, 0x00000000, 0x00000000, 0x80000000}};
@@ -2554,7 +2555,7 @@ START_TEST(test_int_to_decimal_ok2) {
 START_TEST(test_int_to_decimal_ok3) {
   int src = -419;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_int_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x000001a3, 0x00000000, 0x00000000, 0x80000000}};
@@ -2565,7 +2566,7 @@ START_TEST(test_int_to_decimal_ok3) {
 START_TEST(test_int_to_decimal_ok4) {
   int src = 0;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_int_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x00000000, 0x00000000, 0x00000000, 0x00000000}};
@@ -2576,7 +2577,7 @@ START_TEST(test_int_to_decimal_ok4) {
 START_TEST(test_int_to_decimal_ok5) {
   int src = INT_MIN;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_int_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x80000000, 0x00000000, 0x00000000, 0x80000000}};
@@ -2605,7 +2606,7 @@ START_TEST(test_decimal_to_int_bad1) {
 }
 
 START_TEST(test_decimal_to_int_bad2) {
-  s21_decimal src = {{1, 0, 0, 1000000000}}; // слишком большая степень
+  s21_decimal src = {{1, 0, 0, 1000000000}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2613,7 +2614,7 @@ START_TEST(test_decimal_to_int_bad2) {
 }
 
 START_TEST(test_decimal_to_int_bad3) {
-  s21_decimal src = {{-1, 0, 0, 0x1D0000}}; // слишком большая степень
+  s21_decimal src = {{-1, 0, 0, 0x1D0000}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2621,7 +2622,7 @@ START_TEST(test_decimal_to_int_bad3) {
 }
 
 START_TEST(test_decimal_to_int_bad4) {
-  s21_decimal src = {{0, 0, 0, 0x1D0000}}; // слишком большая степень
+  s21_decimal src = {{0, 0, 0, 0x1D0000}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2629,7 +2630,7 @@ START_TEST(test_decimal_to_int_bad4) {
 }
 
 START_TEST(test_decimal_to_int_bad5) {
-  s21_decimal src = {{-1, 0, 0, 0x1C0001}}; // слишком большая степень
+  s21_decimal src = {{-1, 0, 0, 0x1C0001}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2637,7 +2638,7 @@ START_TEST(test_decimal_to_int_bad5) {
 }
 
 START_TEST(test_decimal_to_int_bad6) {
-  s21_decimal src = {{-1, 0, 0, 0x11C0000}}; // слишком большая степень
+  s21_decimal src = {{-1, 0, 0, 0x11C0000}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2646,7 +2647,7 @@ START_TEST(test_decimal_to_int_bad6) {
 
 START_TEST(test_decimal_to_int_bad7) {
   s21_decimal src = {{0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-                      0xFFFFFFFF}}; // слишком большая степень
+                      0xFFFFFFFF}};  // слишком большая степень
   int res;
   int exit_code = s21_from_decimal_to_int(src, &res);
   int expected_exit_code = 1;
@@ -2657,7 +2658,7 @@ START_TEST(test_decimal_to_int_bad7) {
 START_TEST(test_float_to_decimal_ok1) {
   float src = 56.986;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0xDE9A, 0, 0, 0x30000}};
@@ -2669,7 +2670,7 @@ START_TEST(test_float_to_decimal_ok1) {
 START_TEST(test_float_to_decimal_ok2) {
   float src = -1.596;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{1596, 0, 0, 2147680256}};
@@ -2681,7 +2682,7 @@ START_TEST(test_float_to_decimal_ok2) {
 START_TEST(test_float_to_decimal_ok3) {
   float src = (46237.42332 / 12712.37834);
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{3637197, 0, 0, 393216}};
@@ -2693,7 +2694,7 @@ START_TEST(test_float_to_decimal_ok3) {
 START_TEST(test_float_to_decimal_ok4) {
   float src = 0.0000000000000000002284016;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x22D9F0, 0x0, 0x0, 0x190000}};
@@ -2705,7 +2706,7 @@ START_TEST(test_float_to_decimal_ok4) {
 START_TEST(test_float_to_decimal_ok5) {
   float src = -0.0000000000000000002284016;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x22D9F0, 0x0, 0x0, 0x80190000}};
@@ -2717,7 +2718,7 @@ START_TEST(test_float_to_decimal_ok5) {
 START_TEST(test_float_to_decimal_ok6) {
   float src = 2.1349025E-18;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x209376, 0x0, 0x0, 0x180000}};
@@ -2730,7 +2731,7 @@ START_TEST(test_float_to_decimal_ok6) {
 START_TEST(test_float_to_decimal_ok7) {
   float src = 7.91617864E+11;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 0;
   s21_decimal expected_dec = {{0x501A8DE0, 0xB8, 0x0, 0x0}};
@@ -2739,16 +2740,638 @@ START_TEST(test_float_to_decimal_ok7) {
   ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
 }
 
+START_TEST(test_float_to_decimal_ok8) {
+  float src = 0.0;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0, 0, 0, 0}};
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok9) {
+  float src = -0.0;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0, 0, 0, 0x80000000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok10) {
+  float src = 5.92141241E+23;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xBF280000, 0x9ED0576, 0x7D64, 0x0}};
+  // printf("BBBBBBBBBB%f\n%d %x %x %x\n\n", (float)src, res.bits[0],
+  // res.bits[1], res.bits[2], res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok11) {
+  float src = -5.92141241E+23;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xBF280000, 0x9ED0576, 0x7D64, 0x80000000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok12) {
+  float src = 8.38680669E+16;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xB858FC00, 0x129F590, 0x0, 0x0}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok13) {
+  float src = -8.38680669E+16;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xB858FC00, 0x129F590, 0x0, 0x80000000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok14) {
+  float src = -0.0255207196;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x26F108, 0x0, 0x0, 0x80080000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok15) {
+  float src = 8.66900895E-23;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xD3A55, 0x0, 0x0, 0x1C0000}};
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok16) {
+  float src = -8.66900895E-23;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xD3A55, 0x0, 0x0, 0x801C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok17) {
+  float src = 0.00399137754;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x3CE752, 0x0, 0x0, 0x90000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok18) {
+  float src = 9732131234575756436473.323123474;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xC7238000, 0x9472ED75, 0x0000020F, 0}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok19) {
+  float src = 0.0000000000000000093929383838292;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x008F532B, 0, 0, 0x00180000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok20) {
+  float src = -1.16865436E+26;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0xBAE00000, 0x7467DF7, 0x60AB36, 0x80000000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok21) {
+  float src = 2.70840103E+12;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x99478E40, 0x276, 0x0, 0x0}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok22) {
+  float src = -2.70840103E+12;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x99478E40, 0x276, 0x0, 0x80000000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok23) {
+  float src = 6.74712444E-21;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x66F3F4, 0x0, 0x0, 0x1B0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok24) {
+  float src = 1.40592974E-22;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x22531, 0x0, 0x0, 0x1B0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok25) {
+  float src = -1.40592974E-22;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x22531, 0x0, 0x0, 0x801B0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok26) {
+  float src = -4.44212428E-21;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x43C80C, 0x0, 0x0, 0x801B0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok27) {
+  float src = 2.07975469E-28;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x2, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok28) {
+  float src = -2.07975469E-28;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x2, 0x0, 0x0, 0x801C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok29) {
+  float src = 2.07658485E-27;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x15, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok30) {
+  float src = 1.91731719E-25;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x77D, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok31) {
+  float src = 1.30094713E-25;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x515, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok32) {
+  float src = -2.58369932E-23;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x64ED, 0x0, 0x0, 0x801B0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok33) {
+  float src = -6.67746875E-28;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x7, 0x0, 0x0, 0x801C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok34) {
+  float src = 6.67746875E-28;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x7, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok35) {
+  float src = 5.83757933E-26;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x248, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok36) {
+  float src = 7.49090375E-27;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x4B, 0x0, 0x0, 0x1C0000}};
+  // printf("\n%x %x %x %x\n\n", res.bits[0], res.bits[1], res.bits[2],
+  // res.bits[3]);
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_ok37) {
+  float src = 2.07975469E-28;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 0;
+  s21_decimal expected_dec = {{0x2, 0x0, 0x0, 0x1C0000}};
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+  ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
 START_TEST(test_float_to_decimal_bad1) {
   float src = 1.0 / 0.0;
   s21_decimal res;
-  s21_set_decimal_zero(&res);
+
   int exit_code = s21_from_float_to_decimal(src, &res);
   int expected_exit_code = 1;
   s21_decimal expected_dec = {{0, 0, 0, 0}};
 
   ck_assert_int_eq(exit_code, expected_exit_code);
   ck_assert_mem_eq(&expected_dec, &res, 4 * sizeof(uint32_t));
+}
+
+START_TEST(test_float_to_decimal_bad2) {
+  float src = INFINITY;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad3) {
+  float src = -INFINITY;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad4) {
+  float src = NAN;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad5) {
+  float src = -NAN;
+  s21_decimal res;
+
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad6) {
+  float src = 2.0f;
+  int exit_code = s21_from_float_to_decimal(src, NULL);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad7) {
+  float src =
+      0.00000000000000000000000000009999999429857660888699309391359540480357727713304344f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad8) {
+  float src =
+      0.00000000000000000000000000009999998828004553267688105311366433422567940670147579f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad9) {
+  float src =
+      4.999999414002276633844052655683216711283970335073789659219301029224880039691925048828125E-29f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad10) {
+  float src =
+      1.2621774483536188886587657044524579674771302961744368076324462890625E-29f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad11) {
+  float src =
+      1.0000000031710768509710513471352647538147514756461109453056224083411507308483123779296875E-29f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad12) {
+  float src =
+      7.7037193183714626222678539700519994217126886949453196668630670929101000865557580254971981E-34f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad13) {
+  float src =
+      4.8148245739821641389174087312824996385704304343408247917894169330688125540973487659357488E-35f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad14) {
+  float src =
+      1.1754943508222875079687365372222456778186655567720875215087517062784172594547271728515625E-38f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad15) {
+  float src =
+      1.4012984643248170709237295832899161312802619418765157717570682838897910826858606014866381E-45f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad16) {
+  float src = 340282346638528859811704183484516925440.f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad17) {
+  float src = 340282326356119256160033759537265639424.f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad18) {
+  float src = 283568632339978851668922031544056414208.f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad19) {
+  float src = 2658455991569831745807614120560689152.f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad20) {
+  float src = 158456315583795709447797473280.0f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad21) {
+  float src = 158456306139062743708507045888.0f;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad24) {
+  float src = 7.9E-31;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
+}
+
+START_TEST(test_float_to_decimal_bad25) {
+  float src = 7.9E+32;
+  s21_decimal res;
+  int exit_code = s21_from_float_to_decimal(src, &res);
+  int expected_exit_code = 1;
+
+  ck_assert_int_eq(exit_code, expected_exit_code);
 }
 
 //---------------------s21_decimal to float-----------------------//
@@ -2882,13 +3505,6 @@ Suite *s21_from_int_to_decimal_suite(void) {
   tcase_add_test(tc_core, test_int_to_decimal_ok4);
   tcase_add_test(tc_core, test_int_to_decimal_ok5);
 
-  //---------------------s21_decimal to float-----------------------//
-  tcase_add_test(tc_core, test_decimal_to_float_ok1);
-  tcase_add_test(tc_core, test_decimal_to_float_ok2);
-  tcase_add_test(tc_core, test_decimal_to_float_ok3);
-  tcase_add_test(tc_core, test_decimal_to_float_ok4);
-
-  tcase_add_test(tc_core, test_decimal_to_float_bad1);
   suite_add_tcase(s, tc_core);
 
   return s;
@@ -2900,15 +3516,14 @@ Suite *s21_from_decimal_to_int_suite(void) {
   s = suite_create("\033[35m====-{s21_from_decimal_to_int}-====\033[0m");
   tc_core = tcase_create("s21_from_decimal_to_int_Core");
 
-  tcase_add_test(tc_core, test_float_to_decimal_ok1);
-  tcase_add_test(tc_core, test_float_to_decimal_ok2);
-  tcase_add_test(tc_core, test_float_to_decimal_ok3);
-  tcase_add_test(tc_core, test_float_to_decimal_ok4);
-  tcase_add_test(tc_core, test_float_to_decimal_ok5);
-  tcase_add_test(tc_core, test_float_to_decimal_ok6);
-  tcase_add_test(tc_core, test_float_to_decimal_ok7);
-
-  tcase_add_test(tc_core, test_float_to_decimal_bad1);
+  tcase_add_test(tc_core, test_decimal_to_int_ok1);
+  tcase_add_test(tc_core, test_decimal_to_int_bad1);
+  tcase_add_test(tc_core, test_decimal_to_int_bad2);
+  tcase_add_test(tc_core, test_decimal_to_int_bad3);
+  tcase_add_test(tc_core, test_decimal_to_int_bad4);
+  tcase_add_test(tc_core, test_decimal_to_int_bad5);
+  tcase_add_test(tc_core, test_decimal_to_int_bad6);
+  tcase_add_test(tc_core, test_decimal_to_int_bad7);
 
   suite_add_tcase(s, tc_core);
 
@@ -2921,15 +3536,67 @@ Suite *s21_from_float_to_decimal_suite(void) {
   s = suite_create("\033[35m====-{s21_from_float_to_decimal}-====\033[0m");
   tc_core = tcase_create("s21_from_float_to_decimal_Core");
 
-  tcase_add_test(tc_core, test_decimal_to_int_ok1);
+  tcase_add_test(tc_core, test_float_to_decimal_ok1);
+  tcase_add_test(tc_core, test_float_to_decimal_ok2);
+  tcase_add_test(tc_core, test_float_to_decimal_ok3);
+  tcase_add_test(tc_core, test_float_to_decimal_ok4);
+  tcase_add_test(tc_core, test_float_to_decimal_ok5);
+  tcase_add_test(tc_core, test_float_to_decimal_ok6);
+  tcase_add_test(tc_core, test_float_to_decimal_ok7);
+  tcase_add_test(tc_core, test_float_to_decimal_ok8);
+  tcase_add_test(tc_core, test_float_to_decimal_ok9);
+  tcase_add_test(tc_core, test_float_to_decimal_ok10);
+  tcase_add_test(tc_core, test_float_to_decimal_ok11);
+  tcase_add_test(tc_core, test_float_to_decimal_ok12);
+  tcase_add_test(tc_core, test_float_to_decimal_ok13);
+  tcase_add_test(tc_core, test_float_to_decimal_ok14);
+  tcase_add_test(tc_core, test_float_to_decimal_ok15);
+  tcase_add_test(tc_core, test_float_to_decimal_ok16);
+  tcase_add_test(tc_core, test_float_to_decimal_ok17);
+  tcase_add_test(tc_core, test_float_to_decimal_ok18);
+  tcase_add_test(tc_core, test_float_to_decimal_ok19);
+  tcase_add_test(tc_core, test_float_to_decimal_ok20);
+  tcase_add_test(tc_core, test_float_to_decimal_ok21);
+  tcase_add_test(tc_core, test_float_to_decimal_ok22);
+  tcase_add_test(tc_core, test_float_to_decimal_ok23);
+  tcase_add_test(tc_core, test_float_to_decimal_ok24);
+  tcase_add_test(tc_core, test_float_to_decimal_ok25);
+  tcase_add_test(tc_core, test_float_to_decimal_ok26);
+  tcase_add_test(tc_core, test_float_to_decimal_ok27);
+  tcase_add_test(tc_core, test_float_to_decimal_ok28);
+  tcase_add_test(tc_core, test_float_to_decimal_ok29);
+  tcase_add_test(tc_core, test_float_to_decimal_ok30);
+  tcase_add_test(tc_core, test_float_to_decimal_ok31);
+  tcase_add_test(tc_core, test_float_to_decimal_ok32);
+  tcase_add_test(tc_core, test_float_to_decimal_ok33);
+  tcase_add_test(tc_core, test_float_to_decimal_ok34);
+  tcase_add_test(tc_core, test_float_to_decimal_ok35);
+  tcase_add_test(tc_core, test_float_to_decimal_ok36);
+  tcase_add_test(tc_core, test_float_to_decimal_ok37);
 
-  tcase_add_test(tc_core, test_decimal_to_int_bad1);
-  tcase_add_test(tc_core, test_decimal_to_int_bad2);
-  tcase_add_test(tc_core, test_decimal_to_int_bad3);
-  tcase_add_test(tc_core, test_decimal_to_int_bad4);
-  tcase_add_test(tc_core, test_decimal_to_int_bad5);
-  tcase_add_test(tc_core, test_decimal_to_int_bad6);
-  tcase_add_test(tc_core, test_decimal_to_int_bad7);
+  tcase_add_test(tc_core, test_float_to_decimal_bad1);
+  tcase_add_test(tc_core, test_float_to_decimal_bad2);
+  tcase_add_test(tc_core, test_float_to_decimal_bad3);
+  tcase_add_test(tc_core, test_float_to_decimal_bad4);
+  tcase_add_test(tc_core, test_float_to_decimal_bad5);
+  tcase_add_test(tc_core, test_float_to_decimal_bad6);
+  tcase_add_test(tc_core, test_float_to_decimal_bad7);
+  tcase_add_test(tc_core, test_float_to_decimal_bad8);
+  tcase_add_test(tc_core, test_float_to_decimal_bad9);
+  tcase_add_test(tc_core, test_float_to_decimal_bad10);
+  tcase_add_test(tc_core, test_float_to_decimal_bad11);
+  tcase_add_test(tc_core, test_float_to_decimal_bad12);
+  tcase_add_test(tc_core, test_float_to_decimal_bad13);
+  tcase_add_test(tc_core, test_float_to_decimal_bad14);
+  tcase_add_test(tc_core, test_float_to_decimal_bad15);
+  tcase_add_test(tc_core, test_float_to_decimal_bad16);
+  tcase_add_test(tc_core, test_float_to_decimal_bad17);
+  tcase_add_test(tc_core, test_float_to_decimal_bad18);
+  tcase_add_test(tc_core, test_float_to_decimal_bad19);
+  tcase_add_test(tc_core, test_float_to_decimal_bad20);
+  tcase_add_test(tc_core, test_float_to_decimal_bad21);
+  tcase_add_test(tc_core, test_float_to_decimal_bad24);
+  tcase_add_test(tc_core, test_float_to_decimal_bad25);
 
   suite_add_tcase(s, tc_core);
 

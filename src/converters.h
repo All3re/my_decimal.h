@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "arithm.h"
 
@@ -14,6 +15,7 @@ int s21_from_decimal_to_float(s21_decimal dec, float *num);
 
 void s21_set_decimal_zero(s21_decimal *dst);
 unsigned int s21_get_exp(s21_decimal src);
+void normal_set_sign(s21_decimal *res);
 
 unsigned int s21_set_mask(int index);
 

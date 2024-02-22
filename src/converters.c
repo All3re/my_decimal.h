@@ -1,6 +1,7 @@
 #define SCALE_MASK 0b11111111 << 16
 #define MAX_FLOAT_TO_CONVERT 79228162514264337593543950335.0
-#define MIN_FLOAT_TO_CONVERT 1e-28
+#define MIN_FLOAT_TO_CONVERT \
+  0.00000000000000000000000000010000000031710768509710513471352647538147514756461109f
 
 #include "converters.h"
 
@@ -25,14 +26,22 @@ void s21_set_decimal_zero(s21_decimal *dst) {
 }
 
 int s21_get_scale_from_string(char *formated_float) {
-  int scale = 0, i;
-  i = formated_float[0] == '-' ? 11 : 10;
-  for (; formated_float[i] != '\0'; i++) {
-    scale = scale * 10 + (formated_float[i] - 48);
+  int scale = 0;
+  char *ptr = formated_float;
+  while (ptr) {
+    if (*ptr == 'E') {
+      ptr++;
+      scale = strtol(ptr, NULL, 10);
+      break;
+    }
+    ptr++;
   }
-  if (formated_float[9] == '-' || formated_float[10] == '-') {
-    scale = -scale;
-  }
+  // for (; formated_float[i] != '\0'; i++) {
+  //   scale = scale * 10 + (formated_float[i] - 48);
+  // }
+  // if (formated_float[9] == '-' || formated_float[10] == '-') {
+  //   scale = -scale;
+  // }
 
   return scale;
 }
@@ -52,6 +61,7 @@ int is_decimal_correct(s21_decimal src) {
 }
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst) {
+  s21_set_decimal_zero(dst);
   int exit_code = 0;
   if (!dst || src > INT_MAX || src < INT_MIN) {
     exit_code = 1;
@@ -123,48 +133,50 @@ s21_decimal from_char_to_decimal(char digit) {
   s21_set_decimal_zero(&dec);
 
   switch (digit) {
-  case '0':
-    s21_from_int_to_decimal(0, &dec);
-    break;
-  case '1':
-    s21_from_int_to_decimal(1, &dec);
-    break;
-  case '2':
-    s21_from_int_to_decimal(2, &dec);
-    break;
-  case '3':
-    s21_from_int_to_decimal(3, &dec);
-    break;
-  case '4':
-    s21_from_int_to_decimal(4, &dec);
-    break;
-  case '5':
-    s21_from_int_to_decimal(5, &dec);
-    break;
-  case '6':
-    s21_from_int_to_decimal(6, &dec);
-    break;
-  case '7':
-    s21_from_int_to_decimal(7, &dec);
-    break;
-  case '8':
-    s21_from_int_to_decimal(8, &dec);
-    break;
-  case '9':
-    s21_from_int_to_decimal(9, &dec);
-    break;
+    case '0':
+      s21_from_int_to_decimal(0, &dec);
+      break;
+    case '1':
+      s21_from_int_to_decimal(1, &dec);
+      break;
+    case '2':
+      s21_from_int_to_decimal(2, &dec);
+      break;
+    case '3':
+      s21_from_int_to_decimal(3, &dec);
+      break;
+    case '4':
+      s21_from_int_to_decimal(4, &dec);
+      break;
+    case '5':
+      s21_from_int_to_decimal(5, &dec);
+      break;
+    case '6':
+      s21_from_int_to_decimal(6, &dec);
+      break;
+    case '7':
+      s21_from_int_to_decimal(7, &dec);
+      break;
+    case '8':
+      s21_from_int_to_decimal(8, &dec);
+      break;
+    case '9':
+      s21_from_int_to_decimal(9, &dec);
+      break;
   }
   return dec;
 }
 
 void s21_string_to_decimal(char *formated_float, s21_decimal *dec) {
   int scale = s21_get_scale_from_string(formated_float);
-  s21_decimal result;
+  s21_decimal result = {0};
   s21_decimal ten = {{10, 0, 0, 0}};
+  int max_scale = 28;
   int i;
   i = formated_float[0] == '-' ? 1 : 0;
   result = from_char_to_decimal(formated_float[i]);
-  for (i += 2; formated_float[i] != 'E'; i++) {
+  for (i = formated_float[i + 1] == '.' ? i + 2 : i + 1;
+       formated_float[i] != 'E'; i++) {
     s21_mul(result, ten, &result);
     s21_add(result, from_char_to_decimal(formated_float[i]), &result);
   }
@@ -177,7 +189,11 @@ void s21_string_to_decimal(char *formated_float, s21_decimal *dec) {
   } else if (scale < 0) {
     while (scale < 0 && result.bits[0] % 10 == 0) {
       result.bits[0] /= 10;
+      max_scale--;
       scale++;
+    }
+    if (scale <= -28) {
+      scale = max_scale;
     }
     set_scale(abs(scale), &result);
   }
@@ -185,17 +201,33 @@ void s21_string_to_decimal(char *formated_float, s21_decimal *dec) {
 }
 
 int s21_from_float_to_decimal(float num, s21_decimal *dec) {
+  if (dec) {
+    s21_set_decimal_zero(dec);
+  }
   int exit_code = 0;
-  if (num > MAX_FLOAT_TO_CONVERT || isnan(num) || isinf(num) ||
-      fabs(num) < MIN_FLOAT_TO_CONVERT) {
+  if (!dec) {
     exit_code = 1;
+  } else if (fabsf(num) > MAX_FLOAT_TO_CONVERT) {
+    exit_code = 1;
+  } else if (fabsf(num) < MIN_FLOAT_TO_CONVERT && fabsf(num) != 0.0) {
+    exit_code = 1;
+  } else if (isnan(num) || isinf(num)) {
+    exit_code = 1;
+  } else if (num == 0.0) {
+    s21_set_decimal_zero(dec);
+    if (*(unsigned int *)&num & (1 << 31)) {
+      set_sign(dec, 1);
+    }
   } else {
+    s21_set_decimal_zero(dec);
     char formated[30];
     sprintf(formated, "%.6E", num);
+
     int scale = s21_get_scale_from_string(formated);
+
     if (scale <= -23) {
       int new_scale = scale + 28;
-      sprintf(formated, "%.*E", new_scale, num);
+      sprintf(formated, "%.*E", new_scale, fabsf(num));
     }
     s21_string_to_decimal(formated, dec);
     if (num < 0) {
